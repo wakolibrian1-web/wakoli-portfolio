@@ -189,6 +189,20 @@ $conn->close();
 
     .btn-logout:hover { background: #b91c1c; }
 
+    .btn-photo {
+      background: #0f766e;
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 0.45rem 1.1rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .btn-photo:hover { background: #0d6460; }
+
     /* ── Main content ────────────────────────────── */
     .main {
       flex: 1;
@@ -491,6 +505,7 @@ $conn->close();
   </div>
   <div class="topbar-right">
     <span class="admin-badge">👤 <?= htmlspecialchars($_SESSION['admin_user']) ?></span>
+    <a class="btn-photo" href="media.php">🖼️ Media Manager</a>
     <a class="btn-logout" href="logout.php">Logout</a>
   </div>
 </header>

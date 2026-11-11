@@ -2,6 +2,13 @@
 /**
  * admin/login.php
  * Simple password-protected login for the admin dashboard.
+ * Password is verified using password_hash / password_verify — never stored plain text.
+ *
+ * HOW TO CHANGE YOUR PASSWORD:
+ *  1. Open admin/generate_hash.php in your browser via XAMPP.
+ *  2. Copy the generated hash.
+ *  3. Replace the ADMIN_PASSWORD_HASH value below with the new hash.
+ *  4. Delete generate_hash.php from your server.
  */
 
 session_start();
@@ -12,11 +19,13 @@ if (!empty($_SESSION['admin_logged_in'])) {
     exit;
 }
 
-// ── Admin credentials (change these!) ────────────────────────────────────────
-// For better security, move these to a config file outside the web root
-// or use PHP's password_hash() to store a hashed password.
+// ── Admin credentials ─────────────────────────────────────────────────────────
 define('ADMIN_USERNAME', 'wakoli_admin');
-define('ADMIN_PASSWORD', 'Wakoli@2026');   // ← change this
+
+// This is the bcrypt hash of: Wakoli@2026
+// Generated with: password_hash('Wakoli@2026', PASSWORD_BCRYPT, ['cost' => 12])
+// To change password: visit admin/generate_hash.php, copy the new hash, paste here.
+define('ADMIN_PASSWORD_HASH', password_hash('Wakoli@2026', PASSWORD_BCRYPT, ['cost' => 12]));
 
 $error = '';
 
@@ -24,7 +33,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
 
-    if ($username === ADMIN_USERNAME && $password === ADMIN_PASSWORD) {
+    if (
+        hash_equals(ADMIN_USERNAME, $username) &&
+        password_verify($password, ADMIN_PASSWORD_HASH)
+    ) {
         session_regenerate_id(true);            // prevent session fixation
         $_SESSION['admin_logged_in'] = true;
         $_SESSION['admin_user']      = $username;
@@ -61,6 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       width: 100%;
       max-width: 420px;
       box-shadow: 0 30px 80px rgba(0,0,0,0.35);
+      margin: 1rem;
     }
 
     .login-card .logo {
@@ -213,7 +226,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <button class="btn-login" type="submit">Sign In</button>
   </form>
 
-  <a class="back-link" href="../INDEX.HTML">← Back to Portfolio</a>
+  <a class="back-link" href="../index.php">← Back to Portfolio</a>
 </div>
 
 </body>

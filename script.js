@@ -28,11 +28,12 @@ if (menuToggle && siteNav) {
 }
 
 // ── Contact form status message ───────────────────────────────────────────────
-// After wenyaa.php redirects back, the URL contains ?status=success or ?status=error
+// wenyaa.php redirects as:  index.php?status=success#contact
+// Query string is BEFORE the hash so URLSearchParams can read it correctly.
 (function showFormStatus() {
-  const params     = new URLSearchParams(window.location.search);
-  const status     = params.get('status');
-  const statusEl   = document.getElementById('form-status');
+  const params   = new URLSearchParams(window.location.search);
+  const status   = params.get('status');
+  const statusEl = document.getElementById('form-status');
 
   if (!status || !statusEl) return;
 
@@ -47,12 +48,12 @@ if (menuToggle && siteNav) {
 
   statusEl.hidden = false;
 
-  // Scroll to the contact section so the user sees the message
+  // Scroll to contact section so user sees the message
   const contactSection = document.getElementById('contact');
   if (contactSection) {
     contactSection.scrollIntoView({ behavior: 'smooth' });
   }
 
-  // Clean the query string from the URL without a page reload
+  // ✅ Clean the URL — remove query string, keep the hash
   window.history.replaceState({}, document.title, window.location.pathname + '#contact');
 })();
